@@ -1,0 +1,154 @@
+{
+  "title": "Spandrel Projection Fold Specification Input Vectors",
+  "version": "1.0.0-draft",
+  "status": "specification_input",
+  "notice": "These vectors specify input scenarios for the neutral key-value projection fold fixture defined in docs/specification.md § 4. They serve as specification input, not an executable conformance proof (no semantic test runner exists in Spandrel yet).",
+  "clauses_cited": [
+    "PROJ-01",
+    "PROJ-02",
+    "PROJ-03",
+    "PROJ-04",
+    "PROJ-05",
+    "PROJ-06"
+  ],
+  "fixture": {
+    "type": "simple_key_value_map",
+    "specification_ref": "../../docs/specification.md#proj-06-neutral-test-fixture-definition-simple-key-value-map"
+  },
+  "scenarios": [
+    {
+      "id": "VFOLD-01",
+      "name": "empty_sequence",
+      "description": "An empty event sequence leaves initial state unchanged.",
+      "clauses": [
+        "PROJ-02",
+        "PROJ-06"
+      ],
+      "initial_state": {},
+      "events": [],
+      "expected_final_state": {}
+    },
+    {
+      "id": "VFOLD-02",
+      "name": "set_and_overwrite",
+      "description": "Sequential Set operations insert distinct keys and overwrite existing keys with the latest value.",
+      "clauses": [
+        "PROJ-01",
+        "PROJ-02",
+        "PROJ-06"
+      ],
+      "initial_state": {},
+      "events": [
+        {
+          "type": "Set",
+          "payload": {
+            "key": "alpha",
+            "value": "1"
+          }
+        },
+        {
+          "type": "Set",
+          "payload": {
+            "key": "beta",
+            "value": "2"
+          }
+        },
+        {
+          "type": "Set",
+          "payload": {
+            "key": "alpha",
+            "value": "3"
+          }
+        }
+      ],
+      "expected_final_state": {
+        "alpha": "3",
+        "beta": "2"
+      }
+    },
+    {
+      "id": "VFOLD-03",
+      "name": "remove_existing",
+      "description": "Remove operation deletes an existing key from the map.",
+      "clauses": [
+        "PROJ-02",
+        "PROJ-06"
+      ],
+      "initial_state": {},
+      "events": [
+        {
+          "type": "Set",
+          "payload": {
+            "key": "gamma",
+            "value": "10"
+          }
+        },
+        {
+          "type": "Remove",
+          "payload": {
+            "key": "gamma"
+          }
+        }
+      ],
+      "expected_final_state": {}
+    },
+    {
+      "id": "VFOLD-04",
+      "name": "remove_absent",
+      "description": "Remove operation on a non-existent key is an infallible no-op that leaves state unchanged.",
+      "clauses": [
+        "PROJ-02",
+        "PROJ-03",
+        "PROJ-06"
+      ],
+      "initial_state": {},
+      "events": [
+        {
+          "type": "Set",
+          "payload": {
+            "key": "delta",
+            "value": "20"
+          }
+        },
+        {
+          "type": "Remove",
+          "payload": {
+            "key": "nonexistent"
+          }
+        }
+      ],
+      "expected_final_state": {
+        "delta": "20"
+      }
+    },
+    {
+      "id": "VFOLD-05",
+      "name": "order_sensitivity_and_repeat_from_same_initial",
+      "description": "Replaying identical sequence of operations from the same initial state yields equal structural state. State transitions are order-sensitive.",
+      "clauses": [
+        "PROJ-02",
+        "PROJ-06"
+      ],
+      "initial_state": {},
+      "events": [
+        {
+          "type": "Set",
+          "payload": {
+            "key": "item",
+            "value": "first"
+          }
+        },
+        {
+          "type": "Set",
+          "payload": {
+            "key": "item",
+            "value": "second"
+          }
+        }
+      ],
+      "expected_final_state": {
+        "item": "second"
+      }
+    }
+  ]
+}

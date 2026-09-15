@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Spandrel Architecture Baseline & Component Flow. Offline self-contained documentation.">
+  <title>Spandrel Architecture Baseline &amp; Component Flow</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1f2937;
+      --border: #374151;
+      --border-accent: #4b5563;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --gh-report: #38bdf8;
+      --spandrel: #a855f7;
+      --pardosa: #34d399;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --bg-surface: #ffffff;
+        --bg-surface-elevated: #f1f5f9;
+        --border: #cbd5e1;
+        --border-accent: #94a3b8;
+        --text: #0f172a;
+        --text-muted: #475569;
+        --gh-report: #0284c7;
+        --spandrel: #7c3aed;
+        --pardosa: #059669;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding-bottom: 40px;
+      overflow-x: hidden;
+      width: 100%;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; width: 100%; }
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      margin-bottom: 20px;
+    }
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .logo { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--spandrel);
+      border: 1px solid var(--spandrel);
+      font-family: var(--font-mono);
+      margin-left: 6px;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+    nav a:hover { color: var(--text); }
+    .notice {
+      background: var(--bg-surface);
+      border-left: 4px solid var(--spandrel);
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+    section { margin-bottom: 28px; }
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .card h3 { font-size: 0.95rem; margin-bottom: 8px; }
+    .card.gh-report { border-top: 3px solid var(--gh-report); }
+    .card.spandrel { border-top: 3px solid var(--spandrel); }
+    .card.pardosa { border-top: 3px solid var(--pardosa); }
+    .card ul { list-style: square; padding-left: 18px; font-size: 0.825rem; color: var(--text-muted); }
+    .card ul li { margin-bottom: 4px; }
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .step {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.825rem;
+    }
+    .step-num {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--spandrel);
+      min-width: 20px;
+    }
+    .step-title { font-weight: 600; }
+    .step-owner {
+      font-size: 0.7rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+    }
+    .owner-app { background: rgba(56, 189, 248, 0.15); color: var(--gh-report); }
+    .owner-sub { background: rgba(168, 85, 247, 0.15); color: var(--spandrel); }
+    .owner-stream { background: rgba(52, 211, 153, 0.15); color: var(--pardosa); }
+    .step-desc { color: var(--text-muted); font-size: 0.8rem; flex-basis: 100%; margin-top: 2px; }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      background: var(--bg-surface);
+      min-width: 480px;
+    }
+    th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: var(--bg-surface-elevated); font-weight: 600; }
+    code { font-family: var(--font-mono); font-size: 0.775rem; }
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 28px;
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a { color: var(--spandrel); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-row">
+      <div class="logo">
+        Spandrel <span class="badge">Architecture Baseline</span>
+      </div>
+      <nav>
+        <a href="#ownership">Ownership</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#components">Components</a>
+        <a href="#semantics">Semantics</a>
+        <a href="#pilot">Pilot</a>
+        <a href="./specification.md">Specification</a>
+        <a href="./components.md">Components</a>
+        <a href="../README.md">README</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="notice">
+      <strong>Target Architecture:</strong> All components specify target library designs; no implementation code exists in this repository yet.
+    </div>
+
+    <!-- Section 1: Demarcation of Ownership -->
+    <section id="ownership">
+      <h2>1. Demarcation of Ownership</h2>
+      <div class="grid-3">
+        <div class="card gh-report">
+          <h3>gh-report (Application Layer)</h3>
+          <ul>
+            <li>Domain business rules, commands, and aggregate invariants</li>
+            <li>Compiled monotonic merge and status anti-downgrade logic</li>
+            <li>Presentation view models and HTML rendering (Askama)</li>
+            <li>Application routes, authentication, and external API observation</li>
+          </ul>
+        </div>
+        <div class="card spandrel">
+          <h3>Spandrel (Substrate Layer)</h3>
+          <ul>
+            <li>Domain traits, envelopes, and read-only query ports (ReadPort)</li>
+            <li>Bounded work queues, execution runners, and pacing regulators</li>
+            <li>Decoupled projection fold accumulators and stream schedulers</li>
+            <li>Synchronous storage durability utilities and advisory file locks</li>
+            <li>Standard HTTP serving pipeline (Axum, ETag/304, zstd, WebSocket)</li>
+            <li>Zero Cargo dependencies on Pardosa in core crates</li>
+          </ul>
+        </div>
+        <div class="card pardosa">
+          <h3>Pardosa (Stream Substrate Layer)</h3>
+          <ul>
+            <li>Physical append-only commit line (.pgno container format)</li>
+            <li>Total commit ordering and per-fiber linearizability</li>
+            <li>Single-writer CAS ownership fencing</li>
+            <li>Causal precursor commit chains and BLAKE3 frame integrity</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: End-to-End Capability Pipeline -->
+    <section id="pipeline">
+      <h2>2. Change-Driven Capability Pipeline</h2>
+      <div class="pipeline">
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-title">Ingest &amp; Validate</span>
+          <span class="step-owner owner-app">gh-report</span>
+          <p class="step-desc">Webhook signature validation and task enqueue. Acceptance != completion != commit.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-title">Dispatch &amp; Pace</span>
+          <span class="step-owner owner-sub">Spandrel</span>
+          <p class="step-desc">Bounded work queue dispatches to worker pool under pacing regulators (budget gate / token bucket).</p>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-title">Decide &amp; Propose</span>
+          <span class="step-owner owner-app">gh-report</span>
+          <p class="step-desc">Worker executes command logic (decide(cmd, state) -> Events); aggregates bound consistency where required.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <span class="step-title">Commit &amp; Reconcile</span>
+          <span class="step-owner owner-stream">Pardosa</span>
+          <p class="step-desc">Events commit via synchronous stream append above CAS fencing. Undetermined outcomes require probe reconciliation.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <span class="step-title">Stream Feed (Live/Replay)</span>
+          <span class="step-owner owner-sub">Spandrel</span>
+          <p class="step-desc">Confirmed committed events stream incrementally to live folds or sequentially from store start during replay.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">6</span>
+          <span class="step-title">SAME Projection Fold</span>
+          <span class="step-owner owner-sub">Spandrel</span>
+          <p class="step-desc">Live and historical events fold deterministically through the exact same logic (apply(&amp;mut self, payload)).</p>
+        </div>
+        <div class="step">
+          <span class="step-num">7</span>
+          <span class="step-title">Render &amp; Publish</span>
+          <span class="step-owner owner-app">gh-report</span>
+          <p class="step-desc">Changes trigger view rendering; outputs are zstd-compressed, ETag-hashed, and published to html_cache via ArcSwap.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">8</span>
+          <span class="step-title">Standard HTTP Serve</span>
+          <span class="step-owner owner-sub">Spandrel</span>
+          <p class="step-desc">Serves cached pages directly (returning 304 on ETag match) and emits WebSocket live updates only on change.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Compact 8-Crate Component Coverage -->
+    <section id="components">
+      <h2>3. Component Coverage (8 Donor Crates)</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Donor Crate</th>
+              <th>Target Component</th>
+              <th>Scope &amp; Included Utilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>cherry-pit-core</code></td>
+              <td><strong>Domain &amp; Read Ports</strong></td>
+              <td>Domain traits (DomainEvent, Command, HandleCommand, Aggregate, Policy), envelopes/IDs (AggregateId, IdempotencyKey), and read-only ReadPort. Testing fakes/clocks.</td>
+            </tr>
+            <tr>
+              <td><code>cherry-pit-storage</code></td>
+              <td><strong>Storage &amp; Durability</strong></td>
+              <td>Synchronous file durability (atomic_write_bytes via fsync), advisory RunLock with TTL, snapshot hashing, and persistence error models.</td>
+            </tr>
+            <tr>
+              <td><code>cherry-pit-gateway</code></td>
+              <td><strong>Recovery Utilities</strong></td>
+              <td>Stale lock recovery helpers belong with storage utilities; no separate gateway crate required.</td>
+            </tr>
+            <tr>
+              <td><code>cherry-pit-merger</code></td>
+              <td><strong>Command Serialization</strong></td>
+              <td>Optional local actor (Merger) serializing command submissions. Local serialization alone grants no stream append authority or transaction guarantee.</td>
+            </tr>
+            <tr>
+              <td><code>cherry-pit-projection</code></td>
+              <td><strong>Read-Side Projections</strong></td>
+              <td>Decoupled payload-first Projection fold and checkpoint tracking. Core maintains zero direct Cargo dependencies on Pardosa.</td>
+            </tr>
+            <tr>
+              <td><code>cherry-pit-web</code></td>
+              <td><strong>HTTP Serving &amp; Publication</strong></td>
+              <td>Axum serving pipeline (serve), path normalization, security headers, ETag/304 negotiation, zstd compression, and WebSocket updates.</td>
+            </tr>
+            <tr>
+              <td><code>cherry-pit-wq</code></td>
+              <td><strong>Concurrency &amp; Pacing</strong></td>
+              <td>Bounded work queue with pending dedup, regulated worker pool, batch tracking, backoff/retry/settle policies, and rate limit pacers.</td>
+            </tr>
+            <tr>
+              <td><code>cherry-pit-app</code></td>
+              <td><strong>Scheduling, Bus &amp; Utilities</strong></td>
+              <td>Generic scheduler with arm/cancel/due/recovery hooks (durability depends on caller store), in-process bus, and dead-letter sink.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 4: Reliability & Resource Semantics -->
+    <section id="semantics">
+      <h2>4. Reliability &amp; Resource Semantics</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Reconciliation</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);">
+            An append error does not prove commit failure. Callers must reconcile undetermined outcomes against the stream before retrying or failing.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Cursor Scope</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);">
+            Dragline cursors have stream-local validity and are invalidated across migrations; durable external cursors are not guaranteed.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Resource Contracts</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);">
+            Explicit bounds on queued items and owned heap capacity (payloads/buffers); backpressure, deadlines, and bounded shutdown are required.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Minimal Pilot Focus -->
+    <section id="pilot">
+      <h2>5. Minimal Pilot Focus</h2>
+      <div class="card">
+        <p style="font-size:0.8rem; color:var(--text-muted);">
+          The first implementation target will validate the decoupled payload-first <code>Projection</code> fold inside the existing <code>gh-report</code> runtime under a single-process local-file assumption, retaining the existing queue, workers, store, and server while validating commit-before-fold gap recovery, duplicate refresh semantics, and rendered-state equivalence against live stream catch-up.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div>Spandrel Architecture Baseline &bull; Target Design</div>
+    <div>
+      <a href="./architecture.md">Architecture Narrative</a> &bull;
+      <a href="./specification.md">Specification</a> &bull;
+      <a href="./components.md">Components</a> &bull;
+      <a href="../README.md">README</a>
+    </div>
+  </footer>
+</body>
+</html>
