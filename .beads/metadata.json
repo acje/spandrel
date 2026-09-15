@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "spandrel",
+  "project_id": "b69fdc5a-f703-42b1-8587-985278421a47"
+}
