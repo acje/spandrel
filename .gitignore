@@ -4,6 +4,7 @@
 .beads-credential-key
 .beads/proxieddb/
 .beads.gate.lock
+.beads/interactions.jsonl
 
 # Bead-db rollback backups (local artefacts; keep out of git)
 .beads.backup-*
