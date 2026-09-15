@@ -21,7 +21,7 @@ Spandrel follows the clean-room specification and construction precedent establi
 
 1. **Inside the Wall (Planning Sessions)**:
    - Planning agents inspect donor `cherry-pit-*` crates in `gh-report`.
-   - Extract architectural invariants and extract behavior into `docs/spec/spandrel-1.0.md`.
+   - Evaluate candidate architectural invariants and extract behavior into `docs/spec/spandrel-1.0.md`.
    - Author machine-readable conformance test vectors under `conformance/vectors/`.
 2. **Outside the Wall (Clean Construction Sessions)**:
    - Construction sessions operate strictly in fresh sessions with **no access to donor source code**.
@@ -29,13 +29,28 @@ Spandrel follows the clean-room specification and construction precedent establi
      - The canonical specification (`docs/spec/spandrel-1.0.md`).
      - Derivable conformance test vectors (`conformance/vectors/`).
    - Neither donor source, nor donor git history, nor planning scratch files cross into construction sessions.
+   - Purpose is specification sufficiency and design quality, **not formal IP independence claims**.
    - If an implementation ambiguity arises, it is resolved by returning to planning inside the wall to clarify the specification, never by inspecting donor source.
 
-## Checking the Specification
+## Inception Verification Commands
 
-During the initial inception phase, no automated semantic/spec-coverage checker binary exists yet. A deterministic local check script (modeled on `pardosa/scripts/check.sh` and `spec-coverage`) will be introduced as part of the specification completion milestone before construction begins.
+During the inception and specification planning phase, verify repository health and remote isolation with the following actual local commands:
 
-There is no GitHub Actions CI configured for this repository during the specification phase; verification is executed through local deterministic tooling.
+```bash
+# Inner tier (working tree health)
+git diff --check
+git status --short
+
+# Mid tier (object integrity and remote isolation)
+git fsck --no-reflogs
+gh repo view acje/spandrel --json nameWithOwner,visibility,url,isEmpty
+
+# Boundary tier (history and remote wiring)
+git log -1 --oneline
+git remote -v
+```
+
+No semantic test suite or `spec-coverage` binary exists in this repository yet; those will be introduced as deliverables of the specification phase before construction is admitted.
 
 ## Issue Tracking
 
