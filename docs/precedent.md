@@ -43,7 +43,7 @@ As recorded in Pardosa precedent (`pardosa/docs/plans/pardosa-0.5.1.md:43-44` an
 > *"The purpose is design quality and specification sufficiency, not an IP claim."*
 > *"The founding claim survives because the test is SUFFICIENCY, not INDEPENDENCE."*
 
-Both the donor repository (`Mattilsynet/gh-report`) and target (`acje/spandrel`) share dual MIT / Apache-2.0 licensing under identical copyright (`acje`). There is no external copyright hazard. The discipline of the wall exists because:
+Both the donor repository (`Mattilsynet/gh-report`) and target (`acje/spandrel`) share dual MIT / Apache-2.0 licensing under identical copyright (`acje`). The discipline of the wall exists because:
 - If an agent can implement the library solely from the specification and conformance vectors, the specification is complete.
 - The purpose is architectural subtraction and design quality, **not formal IP independence claims**.
 - Bypassing the specification to copy donor code reproduces unratified invariants, hollow abstractions, and accidental complexity.
