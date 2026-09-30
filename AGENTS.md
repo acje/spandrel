@@ -16,9 +16,7 @@ Ambiguities must be resolved by returning to planning to clarify the specificati
 
 Run verification locally from the repository root:
 ```bash
-git diff --check
-git fsck --no-reflogs
-node -e 'JSON.parse(require("fs").readFileSync("conformance/vectors/projection-fold.draft.json"))'
+sh scripts/verify.sh
 ```
 Verify relative links resolve and `docs/architecture.html` renders offline without horizontal overflow (`scrollWidth <= innerWidth` at 375px and 1280px via `agent-browser`).
 
