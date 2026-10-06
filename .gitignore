@@ -7,6 +7,9 @@
 .beads.gate.lock
 .beads/interactions.jsonl
 
+# Passive beads exports (local durable coordination data; never published)
+/.beads/issues.jsonl
+
 # Bead-db rollback backups (local artefacts; keep out of git)
 .beads.backup-*
 
